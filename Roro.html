@@ -1,0 +1,155 @@
+<!--
+  ملف: index.html
+  وصف: صفحة بسيطة جاهزة للتنزيل/الرفع على أي استضافة (Netlify, GitHub Pages, Vercel, FTP..) 
+  تعليمات سريعة:
+  - لتشغيل الأغنية مباشرة: ارفع ملف mp3 بنفس اسم "song.mp3" في نفس مجلد الصفحة، أو اضغط زر "اختار اغنية" داخل الصفحة لاختيار ملف من جهازك.
+  - يمكنك إضافة رابط يوتيوب عبر حقل "رابط يوتيوب" ثم الضغط "فتح".
+  - لا تغيّر نص الرسالة المتفق عليه — ضفت فقط لمسات تصميمية صغيرة كما طلبت.
+-->
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لرقرق 🌸</title>
+  <style>
+    :root{--pink:#ffdff0;--accent:#ff7fb6;--card:#fff;}
+    html,body{height:100%;margin:0;font-family: 'Tajawal', sans-serif;background:linear-gradient(180deg,var(--pink) 0%, #ffe8f2 100%);color:#333}
+    /* خلفية ورود وقلوب متحركة */
+    .bg{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+    .heart, .flower{position:absolute;opacity:0.9}
+    .heart{width:48px;height:48px;background:radial-gradient(circle at 35% 30%, #fff, rgba(255,255,255,0.2)), linear-gradient(135deg,#ff8bb1,#ff5fa8);transform:rotate(-45deg);border-radius:50% 50% 0 50%/60% 60% 0 40%;}
+    .heart::before,.heart::after{content:'';position:absolute;width:48px;height:48px;background:inherit;border-radius:50%}
+    .heart::before{top:-24px;left:0}
+    .heart::after{left:24px;top:0}
+    .flower{width:64px;height:64px}
+    /* تحريك عائم*/
+    @keyframes floaty{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-30px) rotate(10deg)}100%{transform:translateY(0) rotate(0)}}
+    .bg > *{animation:floaty 6s ease-in-out infinite;}
+
+    /* بطاقة المحتوى */
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.08);padding:30px;max-width:720px;width:100%;text-align:center}
+    h1{margin:0 0 12px;font-size:32px;color:var(--accent)}
+    p.lead{margin:0 0 18px;font-size:18px}
+
+    .btn{display:inline-block;background:linear-gradient(90deg,var(--accent),#ff9ccf);color:white;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700;box-shadow:0 6px 18px rgba(255,127,166,0.25);cursor:pointer;border:none}
+
+    /* overlay الرسالة */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;visibility:hidden;opacity:0;transition:all .25s}
+    .overlay.show{visibility:visible;opacity:1}
+    .msg{background:linear-gradient(180deg,#fff,#fff);border-radius:16px;padding:22px;max-width:640px;width:100%;text-align:right;direction:rtl}
+    .msg p{margin:8px 0;font-size:18px}
+    .close{display:inline-block;margin-top:14px;padding:10px 14px;border-radius:10px;background:#f6f6f6;border:none;cursor:pointer}
+
+    footer{margin-top:14px;font-size:13px;color:#666}
+
+    /* responsive */
+    @media (max-width:520px){h1{font-size:26px}.msg p{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <!-- نضيف قلوب وازهار بشكل عشوائي -->
+    <div class="heart" style="left:6%;top:10%;animation-duration:7s;transform-origin:center;opacity:.95"></div>
+    <div class="heart" style="left:82%;top:18%;animation-duration:6s;opacity:.9;transform-origin:center;transform:scale(.9)"></div>
+    <svg class="flower" style="left:14%;top:72%;position:absolute;animation-duration:8s;" viewBox="0 0 64 64">
+      <g transform="translate(0,0)">
+        <circle cx="32" cy="32" r="10" fill="#ffb3d1" />
+        <g fill="#ffd6e8">
+          <ellipse cx="32" cy="12" rx="8" ry="14"/>
+          <ellipse cx="32" cy="52" rx="8" ry="14"/>
+          <ellipse cx="12" cy="32" rx="14" ry="8"/>
+          <ellipse cx="52" cy="32" rx="14" ry="8"/>
+        </g>
+      </g>
+    </svg>
+    <svg class="flower" style="left:68%;top:60%;position:absolute;animation-duration:5.5s;transform:scale(.85);" viewBox="0 0 64 64">
+      <g>
+        <circle cx="32" cy="32" r="9" fill="#ffd1e6" />
+        <g fill="#fff1f6">
+          <path d="M32 4c3 6 10 6 14 2s-1 11-7 14-11-6-7-16z"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <div class="card" role="main">
+      <h1>مساء الأناقة يا رقرق 🌸</h1>
+      <p class="lead">لك هالصفحة الصغيرة مهدية من قلبي — اضغطي الزر لتشوفي كل الكلام الحلو.</p>
+
+      <div style="margin:18px 0">
+        <button id="openMsg" class="btn">اضغطي هنا رقرقي💖</button>
+      </div>
+
+      <div style="margin-top:8px">
+        <label style="font-size:14px;display:block;margin-bottom:6px">اختار اغنية (mp3) لتشتغل بالخلفية:</label>
+        <input id="fileInput" type="file" accept="audio/*">
+        <div style="margin-top:8px">
+          <button id="playUploaded" class="btn" style="padding:8px 12px;font-size:14px;display:inline-block">تشغيل الاغنية المختارة</button>
+          <button id="stopAudio" class="btn" style="padding:8px 12px;font-size:14px;background:#fff;color:#ff5fa8;border:2px solid #ffd1e6;margin-inline-start:8px">ايقاف</button>
+        </div>
+        <div style="margin-top:8px;font-size:13px;color:#666">او الصق رابط يوتيوب وافتحه: <input id="ytLink" placeholder="https://youtube.com/..." style="padding:6px;border-radius:8px;border:1px solid #eee;width:60%"> <button id="openYt" class="btn" style="padding:6px 10px;font-size:13px">فتح</button></div>
+      </div>
+
+      <footer>ملاحظة: لو تريدني أضيف رابط اليوتيوب مباشرة راسلني برابط الفيديو، وأنا أعدله لك.</footer>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true">
+    <div class="msg">
+      <!-- نص الرسالة (لم أغير الكلام، ضفت لمسات صغيرة بالرصف فقط) -->
+      <p>رقرق احبج هواي</p>
+      <p>احلى وحده بالعالم رقرق</p>
+      <p>حبيبتي الحلوه</p>
+      <p>اروح فدوه لرقرق</p>
+      <p>ابوسها لرقرق 🌝</p>
+      <p>اعششقق رقرق</p>
+      <p>رقرق واحد عراق واحد عالم</p>
+      <p>وضيف بقيه لمساتك بس لا تغير بالكلام</p>
+
+      <button id="closeBtn" class="close">اغلاق</button>
+    </div>
+  </div>
+
+  <!-- عنصر صوتي للتحكم بالاغنية المرفوعة محليا -->
+  <audio id="audioPlayer" loop></audio>
+
+  <script>
+    const overlay = document.getElementById('overlay');
+    document.getElementById('openMsg').addEventListener('click', ()=> overlay.classList.add('show'));
+    document.getElementById('closeBtn').addEventListener('click', ()=> overlay.classList.remove('show'));
+
+    // تحكم بالاغنية المرفوعة
+    const fileInput = document.getElementById('fileInput');
+    const audio = document.getElementById('audioPlayer');
+    const playUploaded = document.getElementById('playUploaded');
+    const stopAudio = document.getElementById('stopAudio');
+
+    fileInput.addEventListener('change', ()=>{
+      const f = fileInput.files[0];
+      if(!f) return;
+      const url = URL.createObjectURL(f);
+      audio.src = url;
+    });
+    playUploaded.addEventListener('click', ()=>{
+      if(!audio.src){ alert('اختر اغنية mp3 اولاً من جهازك'); return; }
+      audio.play().catch(()=>{});
+    });
+    stopAudio.addEventListener('click', ()=>{ audio.pause(); audio.currentTime = 0; });
+
+    // فتح رابط يوتيوب في تبويب جديد
+    document.getElementById('openYt').addEventListener('click', ()=>{
+      const url = document.getElementById('ytLink').value.trim();
+      if(!url) return alert('حط رابط اليوتيوب بعدين اضغط فتح');
+      window.open(url, '_blank');
+    });
+
+    // تحسين تفعيل الزر بصرياً
+    document.getElementById('openMsg').addEventListener('pointerenter', e=> e.target.style.transform='translateY(-3px)');
+    document.getElementById('openMsg').addEventListener('pointerleave', e=> e.target.style.transform='');
+  </script>
+</body>
+</html>
